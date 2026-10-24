@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Install Inbox</title>
+<meta name="description" content="Instagram messages without reels or videos. Install on iPhone.">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-57.png">
+<style>
+  :root {
+    --bg: #f2f2f7; --card: #fff; --text: #1c1c1e; --muted: #6e6e73;
+    --line: rgba(60,60,67,.14); --accent: #0a84ff; --warn: #b25000;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #000; --card: #1c1c1e; --text: #f2f2f7; --muted: #98989f;
+            --line: rgba(84,84,88,.6); --warn: #ff9f0a; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 17px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 460px; margin: 0 auto; padding: max(40px, env(safe-area-inset-top)) 16px 48px; }
+  .hero { text-align: center; }
+  .hero img { width: 112px; height: 112px; border-radius: 25px; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+  h1 { font-size: 30px; margin: 18px 0 2px; letter-spacing: -.02em; }
+  .tag { color: var(--muted); margin: 0 0 24px; }
+  .install {
+    display: block; width: 100%; padding: 15px; border-radius: 14px; border: 0;
+    background: var(--accent); color: #fff; font: 600 18px/1 inherit; font-family: inherit;
+    text-align: center; text-decoration: none;
+  }
+  .install[aria-disabled="true"] { opacity: .4; pointer-events: none; }
+  .meta { color: var(--muted); font-size: 14px; text-align: center; margin: 10px 0 0; min-height: 20px; }
+  .meta.warn { color: var(--warn); }
+  section { background: var(--card); border-radius: 14px; padding: 4px 16px; margin-top: 28px; }
+  h2 { font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em;
+       color: var(--muted); margin: 28px 16px -20px; }
+  ol { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+  ol li { counter-increment: step; display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+  ol li:first-child { border-top: 0; }
+  ol li::before {
+    content: counter(step); flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent); color: #fff; font: 600 14px/24px inherit; font-family: inherit; text-align: center;
+  }
+  section p { margin: 12px 0; }
+  b { font-weight: 600; }
+  .qr { display: none; text-align: center; }
+  .qr #qr { display: inline-block; padding: 12px; background: #fff; border-radius: 12px; margin: 16px 0 8px; }
+  .desktop .qr { display: block; }
+  .desktop .phone-only { display: none; }
+  footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 32px; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <div class="hero">
+    <img src="icon-512.png" alt="">
+    <h1>Inbox</h1>
+    <p class="tag">Instagram messages. No reels, no videos.</p>
+  </div>
+
+  <div class="phone-only">
+    <a id="install" class="install" aria-disabled="true">Install</a>
+    <p id="meta" class="meta">Checking for a build…</p>
+  </div>
+
+  <div class="qr">
+    <p>Open this page on your iPhone to install.<br>Scan with the Camera app:</p>
+    <div id="qr"></div>
+  </div>
+
+  <h2>Install</h2>
+  <section>
+    <ol>
+      <li><span>Open this page in <b>Safari</b> on your iPhone and tap <b>Install</b>.</span></li>
+      <li><span>Tap <b>Install</b> again in the popup. Go to your Home Screen and wait for the <b>Inbox</b> icon to finish loading.</span></li>
+      <li><span>Open <b>Inbox</b> and sign in to Instagram. You stay signed in.</span></li>
+    </ol>
+  </section>
+
+  <h2>Optional: Instagram in Safari too</h2>
+  <section>
+    <ol>
+      <li><span>Open <b>Settings → Apps → Safari → Extensions → Inbox Only</b>.</span></li>
+      <li><span>Turn on <b>Allow Extension</b> and set <b>instagram.com</b> to <b>Allow</b>.</span></li>
+    </ol>
+  </section>
+
+  <h2>If it doesn't install</h2>
+  <section>
+    <p><b>"Unable to install" or nothing happens:</b> this iPhone isn't registered with the developer account yet.
+       Send its UDID to whoever publishes the app; once they add it and publish again, come back and tap Install.</p>
+    <p><b>The app stops opening:</b> the build has expired. Install again from this page after a new build is published.</p>
+  </section>
+
+  <footer>
+    <a href="InboxOnly.ipa">Download .ipa</a> · <a href="https://github.com/nirlotan/inbox-only">Source on GitHub</a>
+  </footer>
+</main>
+
+<script>
+  const isPhone = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (!isPhone) {
+    document.body.classList.add('desktop');
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+    s.onload = () => new QRCode(document.getElementById('qr'), { text: location.href, width: 180, height: 180 });
+    document.head.appendChild(s);
+  }
+
+  const button = document.getElementById('install');
+  const meta = document.getElementById('meta');
+  const manifest = new URL('manifest.plist', location.href).href;
+
+  fetch('release.json', { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(release => {
+      const expires = new Date(release.expires);
+      const date = expires.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+      if (expires < new Date()) {
+        meta.textContent = `This build expired on ${date}. A new one needs to be published.`;
+        meta.classList.add('warn');
+        return;
+      }
+      button.href = 'itms-services://?action=download-manifest&url=' + encodeURIComponent(manifest);
+      button.setAttribute('aria-disabled', 'false');
+      meta.textContent = `Version ${release.version} · works until ${date}`;
+    })
+    .catch(() => {
+      meta.textContent = 'No build published yet.';
+      meta.classList.add('warn');
+    });
+</script>
+</body>
+</html>

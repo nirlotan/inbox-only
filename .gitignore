@@ -1,0 +1,10 @@
+ios/*.xcodeproj/
+build/
+DerivedData/
+Payload/
+*.ipa
+xcuserdata/
+.DS_Store
+
+# Published by scripts/publish.sh for the install page
+!docs/InboxOnly.ipa
