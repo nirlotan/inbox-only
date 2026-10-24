@@ -6,3 +6,4 @@ Payload/
 xcuserdata/
 .DS_Store
 
+__pycache__/
