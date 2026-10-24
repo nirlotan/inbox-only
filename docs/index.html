@@ -76,8 +76,8 @@
   <h2>Install</h2>
   <section>
     <ol>
-      <li><span>Open this page in <b>Safari</b> on your iPhone and tap <b>Install</b>.</span></li>
-      <li><span>Tap <b>Install</b> again in the popup. Go to your Home Screen and wait for the <b>Inbox</b> icon to finish loading.</span></li>
+      <li><span>Get Apple's free <a href="https://apps.apple.com/app/testflight/id899247664"><b>TestFlight</b></a> app.</span></li>
+      <li><span>Come back here and tap <b>Install</b>. TestFlight opens: tap <b>Accept</b>, then <b>Install</b>.</span></li>
       <li><span>Open <b>Inbox</b> and sign in to Instagram. You stay signed in.</span></li>
     </ol>
   </section>
@@ -92,13 +92,14 @@
 
   <h2>If it doesn't install</h2>
   <section>
-    <p><b>"Unable to install" or nothing happens:</b> this iPhone isn't registered with the developer account yet.
-       Send its UDID to whoever publishes the app; once they add it and publish again, come back and tap Install.</p>
-    <p><b>The app stops opening:</b> the build has expired. Install again from this page after a new build is published.</p>
+    <p><b>TestFlight says the beta isn't accepting testers:</b> Apple is still reviewing the newest build.
+       That usually takes less than a day, so try again later.</p>
+    <p><b>The app stops opening:</b> the build expired. Open TestFlight and install the newest build;
+       with automatic updates on, TestFlight does this for you.</p>
   </section>
 
   <footer>
-    <a href="InboxOnly.ipa">Download .ipa</a> · <a href="https://github.com/nirlotan/inbox-only">Source on GitHub</a>
+    <a href="privacy.html">Privacy</a> · <a href="https://github.com/nirlotan/inbox-only">Source on GitHub</a>
   </footer>
 </main>
 
@@ -115,21 +116,19 @@
 
   const button = document.getElementById('install');
   const meta = document.getElementById('meta');
-  const manifest = new URL('manifest.plist', location.href).href;
 
   fetch('release.json', { cache: 'no-store' })
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(release => {
-      const expires = new Date(release.expires);
-      const date = expires.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-      if (expires < new Date()) {
-        meta.textContent = `This build expired on ${date}. A new one needs to be published.`;
-        meta.classList.add('warn');
-        return;
-      }
-      button.href = 'itms-services://?action=download-manifest&url=' + encodeURIComponent(manifest);
+      if (!release.testflight) return Promise.reject();
+      button.href = release.testflight;
       button.setAttribute('aria-disabled', 'false');
-      meta.textContent = `Version ${release.version} · works until ${date}`;
+      meta.textContent = `Version ${release.version} · free via Apple's TestFlight`;
+      const expires = new Date(release.expires);
+      if (release.expires && expires < new Date()) {
+        meta.textContent = 'The current build expired. A new one is on its way.';
+        meta.classList.add('warn');
+      }
     })
     .catch(() => {
       meta.textContent = 'No build published yet.';

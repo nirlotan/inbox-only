@@ -1,2 +1,2 @@
 *.sh text eol=lf
-*.ipa binary
+*.py text eol=lf
