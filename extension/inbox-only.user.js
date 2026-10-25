@@ -96,8 +96,10 @@
   // bounce anything that isn't messaging.
   let lastGood = isAllowed(location.pathname) ? location.href : null;
   let leaving = 0;
+  let sawInbox = false;
 
   function guard() {
+    if (location.pathname.startsWith('/direct/inbox')) sawInbox = true;
     if (isAllowed(location.pathname)) {
       lastGood = location.href;
       clearTimeout(leaving);
@@ -128,6 +130,22 @@
     if (!target) return;
 
     if (target.closest('[data-io-reel]')) return stop(e, 'Reels are blocked');
+
+    // The chat header's back arrow may link to the site root (or be a plain
+    // button); either way it means "back to the inbox".
+    if (location.pathname.startsWith('/direct/') && !location.pathname.startsWith('/direct/inbox')) {
+      const back = target.closest('[aria-label="Back" i]');
+      const rootLink = target.closest('a[href]');
+      let toRoot = false;
+      if (rootLink) {
+        try { toRoot = new URL(rootLink.href, location.href).pathname === '/'; } catch { /* ignore */ }
+      }
+      if (back || toRoot) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return sawInbox ? history.back() : location.assign(HOME);
+      }
+    }
 
     const a = target.closest('a[href]');
     if (!a) return;
